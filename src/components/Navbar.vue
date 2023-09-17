@@ -25,10 +25,10 @@
                     </li>
                 </ul>
                 <div class="d-flex">
-                    <button class="btn btn-outline-success"
+                    <router-link to="/login" class="btn btn-outline-success"
                             type="submit">
                         Giriş
-                    </button>
+                    </router-link>
                     <button class="btn btn-outline-danger" 
                             type="submit">
                         Çıkış
