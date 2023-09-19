@@ -31,7 +31,8 @@
                     </router-link>
                     <button class="btn btn-outline-danger"
                             v-show="kullanici" 
-                            type="submit">
+                            type="submit"
+                            @click="handleCikis">
                         Çıkış
                     </button>
                 </div>
@@ -44,10 +45,21 @@
 
 <script>
 import getUser from '../composables/getUser'
+import {auth} from '../firebase/config'
+import {signOut} from 'firebase/auth';
+
+import { useRouter } from 'vue-router';
+
 export default{
     setup(){
         const {kullanici}=getUser();
-        return {kullanici}
+
+        const router = useRouter();
+        const handleCikis=async()=>{
+            await signOut(auth);
+            router.push({name:'Login'})
+        }
+        return {kullanici,handleCikis}
     },
 }
 </script>
