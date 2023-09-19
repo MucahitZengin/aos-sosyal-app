@@ -16,7 +16,7 @@
             <div class="collapse navbar-collapse" 
                  id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
+                    <li class="nav-item" v-show="kullanici">
                         <a class="nav-link active" 
                            aria-current="page" 
                            href="#">
@@ -25,11 +25,12 @@
                     </li>
                 </ul>
                 <div class="d-flex">
-                    <router-link to="/login" class="btn btn-outline-success"
+                    <router-link to="/login" v-show="!kullanici" class="btn btn-outline-success"
                             type="submit">
                         Giriş
                     </router-link>
-                    <button class="btn btn-outline-danger" 
+                    <button class="btn btn-outline-danger"
+                            v-show="kullanici" 
                             type="submit">
                         Çıkış
                     </button>
@@ -40,3 +41,13 @@
 
     </nav>
 </template>
+
+<script>
+import getUser from '../composables/getUser'
+export default{
+    setup(){
+        const {kullanici}=getUser();
+        return {kullanici}
+    },
+}
+</script>
