@@ -2,10 +2,10 @@
     <div class="container">
         <div class="mb-3">
             <label for="exampleFormControlInput1" class="form-label">Düşüncelerini Yaz</label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Bugün çok mutluyum">
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Bugün çok mutluyum" v-model="gonderi">
         </div>
         <div class="mb-3 text-center">
-            <button type="button" class="btn btn-dark">Gönder</button>
+            <button @click="handleClick" type="button" class="btn btn-dark">Gönder</button>
         </div>
         <hr/>
         <div class="mb-3">
@@ -36,6 +36,33 @@
 
     </div>
 </template>
+
+<script>
+import {ref} from 'vue'
+import getUser from '../composables/getUser';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import {db} from '../firebase/config'
+
+export default{
+    setup(){
+        const {kullanici}=getUser()
+        const gonderi=ref('')
+
+        const handleClick=async()=>{
+            if(kullanici.value){
+                await addDoc(collection(db,'gonderiler'),{
+                    gKullaniciAd: kullanici.value.displayName,
+                    gonderi: gonderi.value,
+                    tarih:serverTimestamp(),
+                    yorumlar:[]
+                })
+                gonderi.value=''
+            }
+        }
+        return {gonderi,handleClick}
+    },
+}
+</script>
 
 <style scoped>
     .container{
