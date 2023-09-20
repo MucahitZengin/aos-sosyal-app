@@ -17,11 +17,11 @@
                  id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item" v-show="kullanici">
-                        <a class="nav-link active" 
+                        <router-link to="/share" class="nav-link active" 
                            aria-current="page" 
                            href="#">
                             Paylaş
-                        </a>
+                        </router-link>
                     </li>
                 </ul>
                 <div class="d-flex">
