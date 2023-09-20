@@ -10,26 +10,12 @@
         <hr/>
         <div class="mb-3">
             <ol class="list-group list-group-numbered">
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li v-for="g in gonderiler" :key="g.id" class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">Birinci entry</div>
-                        Tarih
+                        <div class="fw-bold">{{g.gonderi}}</div>
+                        {{g.tarih}}
                     </div>
-                    <span class="badge bg-primary rounded-pill">Yorum Sayısı</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">İkinci entry</div>
-                        Tarih
-                    </div>
-                    <span class="badge bg-primary rounded-pill">Yorum Sayısı</span>
-                </li>
-                <li class="list-group-item d-flex justify-content-between align-items-start">
-                    <div class="ms-2 me-auto">
-                        <div class="fw-bold">Üçüncü entry</div>
-                        Tarih
-                    </div>
-                    <span class="badge bg-primary rounded-pill">Yorum Sayısı</span>
+                    <span class="badge bg-primary rounded-pill">{{g.yorumlar.length}}</span>
                 </li>
             </ol>
         </div>
@@ -38,15 +24,16 @@
 </template>
 
 <script>
-import {ref} from 'vue'
+import {ref, onMounted} from 'vue'
 import getUser from '../composables/getUser';
-import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, onSnapshot,query,where, QuerySnapshot } from 'firebase/firestore';
 import {db} from '../firebase/config'
 
 export default{
     setup(){
         const {kullanici}=getUser()
         const gonderi=ref('')
+        const gonderiler=ref([])
 
         const handleClick=async()=>{
             if(kullanici.value){
@@ -59,7 +46,20 @@ export default{
                 gonderi.value=''
             }
         }
-        return {gonderi,handleClick}
+
+        onMounted(()=>{
+            const q=query(collection(db,'gonderiler'),where("gKullaniciAd", "==", kullanici.value.displayName))
+
+            onSnapshot(q,querySnapshot=>{
+                const dizi=[];
+
+                querySnapshot.forEach(doc=>{
+                    dizi.push({...doc.data(),id:doc.id})
+                })
+                gonderiler.value=dizi;
+            })
+        })
+        return {gonderi,handleClick, gonderiler}
     },
 }
 </script>
