@@ -16,6 +16,7 @@
                         {{g.tarih}}
                     </div>
                     <span class="badge bg-primary rounded-pill">{{g.yorumlar.length}}</span>
+                    <span @click="handleDelete(g.id)" class="badge bg-danger mx-2"><i class="bi bi-x"></i></span>
                 </li>
             </ol>
         </div>
@@ -26,7 +27,7 @@
 <script>
 import {ref, onMounted} from 'vue'
 import getUser from '../composables/getUser';
-import { addDoc, collection, serverTimestamp, onSnapshot,query,where, QuerySnapshot } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, onSnapshot,query,where, deleteDoc, doc } from 'firebase/firestore';
 import {db} from '../firebase/config'
 
 export default{
@@ -47,6 +48,9 @@ export default{
             }
         }
 
+        const handleDelete=async(id)=>{
+            await deleteDoc(doc(db, "gonderiler", id))
+        }
         onMounted(()=>{
             const q=query(collection(db,'gonderiler'),where("gKullaniciAd", "==", kullanici.value.displayName))
 
@@ -59,7 +63,7 @@ export default{
                 gonderiler.value=dizi;
             })
         })
-        return {gonderi,handleClick, gonderiler}
+        return {gonderi,handleClick, gonderiler, handleDelete}
     },
 }
 </script>
