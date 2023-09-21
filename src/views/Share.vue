@@ -27,14 +27,17 @@
 <script>
 import {ref, onMounted} from 'vue'
 import getUser from '../composables/getUser';
-import { addDoc, collection, serverTimestamp, onSnapshot,query,where, deleteDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp,onSnapshot,query,where,deleteDoc,doc} from 'firebase/firestore';
 import {db} from '../firebase/config'
+import moment from 'moment'
 
 export default{
     setup(){
         const {kullanici}=getUser()
         const gonderi=ref('')
         const gonderiler=ref([])
+
+        moment.locale('tr')
 
         const handleClick=async()=>{
             if(kullanici.value){
@@ -48,7 +51,8 @@ export default{
             }
         }
 
-        const handleDelete=async(id)=>{
+        const handleDelete=async (id)=>{
+            console.log(id);
             await deleteDoc(doc(db, "gonderiler", id))
         }
         onMounted(()=>{
@@ -58,7 +62,7 @@ export default{
                 const dizi=[];
 
                 querySnapshot.forEach(doc=>{
-                    dizi.push({...doc.data(),id:doc.id})
+                    dizi.push({...doc.data(),id:doc.id,tarih:moment(doc.data().tarih.toDate()).format('LLL')})
                 })
                 gonderiler.value=dizi;
             })
