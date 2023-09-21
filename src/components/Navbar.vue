@@ -2,7 +2,7 @@
 <template>
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container">
-            <a class="navbar-brand" href="#">AOS Sosyal</a>
+            <a class="navbar-brand" href="/">AOS Sosyal</a>
             <button class="navbar-toggler" 
                     type="button" 
                     data-bs-toggle="collapse" 
