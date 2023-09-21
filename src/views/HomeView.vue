@@ -6,7 +6,7 @@
           <div class="card-body">
             <h5 class="card-title">{{g.gonderi}}</h5>
             <p class="card-text">{{g.gKullaniciAd}}</p>
-            <a href="" class="btn btn-primary">incele</a>
+            <router-link :to="'/browse/'+g.id" href="" class="btn btn-primary">incele</router-link>
           </div>
           <div class="card-footer text-muted text-center">
             {{g.tarih}}

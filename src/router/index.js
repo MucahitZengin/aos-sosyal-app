@@ -4,6 +4,7 @@ import { auth } from '../firebase/config'
 import HomeView from '../views/HomeView.vue'
 import Login from '../views/Login.vue'
 import Share from '../views/Share.vue'
+import Browse from '../views/Browse.vue'
 
 const kullaniciKontrol=(to,from,next)=>{
   let kullanici=auth.currentUser;
@@ -25,6 +26,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/browse/:id',
+    name: 'Browse',
+    component: Browse
   },
   {
     path: '/share',
