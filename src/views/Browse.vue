@@ -8,26 +8,20 @@
         <div class="row">
             <div class="col-sm-8 mb-3">
                 <div class="card">
-                    <div class="card-header text-end">Tarih</div>
+                    <div class="card-header text-end">{{tarih}}</div>
                     <div class="card-body text-center">
-                        <h5 class="card-title">Gönderi</h5>
-                        <p class="card-text">Kullanıcı Ad</p>
+                        <h5 class="card-title">{{gonderi}}</h5>
+                        <p class="card-text">{{kullaniciAd}}</p>
                     </div>
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <ul class="list-group list-group-flush" v-if="yorumlar.length!==0">
+                        <li class="list-group-item d-flex justify-content-between align-items-start" v-for="y in yorumlar" :key="y.yorum">
                             <div class="ms-2 me-auto">
-                                <div class="fw-bold">yorum 1</div>
+                                <div class="fw-bold">{{y.yorum}}</div>
                             </div>
-                            <span class="badge bg-primary mx-2">kullanıcı ad</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-start">
-                            <div class="ms-2 me-auto">
-                                <div class="fw-bold">yorum 2</div>
-                            </div>
-                            <span class="badge bg-primary mx-2">kullanıcı ad</span>
+                            <span class="badge bg-primary mx-2">{{y.yKullaniciAd}}</span>
                         </li>
                     </ul>
-                    <ul class="list-group list-group-flush">
+                    <ul class="list-group list-group-flush" v-if="yorumlar.length==0">
                         <li class="list-group-item">Henüz yorum yapılmadı</li>
                     </ul>
                 </div>
@@ -52,15 +46,22 @@ import { useRoute } from 'vue-router';
 import getUser from '../composables/getUser'
 import {ref} from 'vue'
 import {db} from '../firebase/config'
-import {doc,updateDoc,arrayUnion} from 'firebase/firestore'
+import {doc,updateDoc,arrayUnion,onSnapshot} from 'firebase/firestore'
+import moment from 'moment'
 
 export default {
     setup() {
         const route = useRoute();
         const {kullanici}=getUser();
+        moment.locale('tr')
 
         //console.log(route.params.id);
-        const yorumText=red('')
+        const yorumText=ref('')
+
+        const gonderi=ref('')
+        const tarih=ref('')
+        const yorumlar=ref([])
+        const kullaniciAd=ref('')
 
         const gonderiRef=doc(db,"gonderiler", route.params.id)
         const handleYorumYap=async ()=>{
@@ -70,9 +71,17 @@ export default {
                     yorum:yorumText.value,
                 })
             })
+            yorumText.value=''
         }
 
-        return{kullanici,yorumText,handleYorumYap}
+        onSnapshot(gonderiRef,(snap)=>{
+            gonderi.value=snap.data().gonderi;
+            tarih.value=moment(snap.data().tarih.toDate()).calendar()
+            kullaniciAd.value=snap.data().gKullaniciAd;
+            yorumlar.value=snap.data().yorumlar;
+        })
+
+        return{kullanici,yorumText,handleYorumYap,gonderi,kullaniciAd,tarih,yorumlar}
     }
 } 
 </script>
