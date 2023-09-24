@@ -34,11 +34,11 @@
             </div>
 
             <div class="col-sm-4" v-show="kullanici">
-                <form action="">
+                <form @submit.prevent="handleYorumYap">
                     <div class="mb-3">
                         <div id="yorumBaslik" class="form-text">Gönderiye Yorum Yapabilirsiniz</div>
                         <label for="yorum" class="form-label">Yorumunuz</label>
-                        <input type="email" class="form-control" id="yorum" aria-describedby="yarumBaslik">
+                        <input type="text" class="form-control" id="yorum" aria-describedby="yorumBaslik" v-model="yorumText">
                     </div>
                     <button type="submit" class="btn btn-outline-primary">Yorum Yap</button>
                 </form>
@@ -50,6 +50,9 @@
 <script>
 import { useRoute } from 'vue-router';
 import getUser from '../composables/getUser'
+import {ref} from 'vue'
+import {db} from '../firebase/config'
+import {doc,updateDoc,arrayUnion} from 'firebase/firestore'
 
 export default {
     setup() {
@@ -57,8 +60,19 @@ export default {
         const {kullanici}=getUser();
 
         //console.log(route.params.id);
+        const yorumText=red('')
 
-        return{kullanici}
+        const gonderiRef=doc(db,"gonderiler", route.params.id)
+        const handleYorumYap=async ()=>{
+            await updateDoc(gonderiRef,{
+                yorumlar: arrayUnion({
+                    yKullaniciAd: kullanici.value.displayName,
+                    yorum:yorumText.value,
+                })
+            })
+        }
+
+        return{kullanici,yorumText,handleYorumYap}
     }
 } 
 </script>
